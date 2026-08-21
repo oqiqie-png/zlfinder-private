@@ -4,8 +4,7 @@ import http from "http";
 const server = http.createServer();
 const wss = new WebSocketServer({ server });
 
-// ⚠️ Change ce code par un mot de passe complexe que toi et tes amis connaissez
-const SECRET_KEY = "MONCODESECRET123"; 
+const SECRET_KEY = "MONCODESECRET123";
 
 wss.on("connection", function connection(ws, req) {
   const urlParams = new URLSearchParams(req.url.split("?")[1]);
@@ -20,8 +19,10 @@ wss.on("connection", function connection(ws, req) {
   console.log("Membre connecte");
 
   ws.on("message", function incoming(message) {
+    // On envoie le message à TOUS les clients, Y COMPRIS l'expéditeur
+    // pour que celui qui poste l'offre la voie apparaître immédiatement sur son écran.
     wss.clients.forEach(function each(client) {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
     });
