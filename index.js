@@ -21,16 +21,13 @@ wss.on('connection', (ws, req) => {
 
     ws.on('message', (message) => {
         try {
-            const parsedData = JSON.parse(message);
-            console.log(`[Serveur]  Type: ${parsedData.type}`);
+            const data = JSON.parse(message);
+            console.log(`[Serveur]  Type: ${data.type} | Joueur: ${data.data?.username} | Animal: ${data.data?.animal}`);
             
-            if (parsedData.data) {
-                console.log(`[Serveur] Joueur: ${parsedData.data.username}, Animal: ${parsedData.data.animal}`);
-            }
-
+            // Broadcast à TOUS les clients
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(parsedData));
+                    client.send(message);
                 }
             });
         } catch (error) {
